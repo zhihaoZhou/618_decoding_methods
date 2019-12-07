@@ -62,6 +62,7 @@ def main(args):
         model_file = 'model/model_' + args.network + '_' + str(epoch) + '.pth'
         torch.save(decoder.state_dict(), model_file)
         print('Saved model to ' + model_file)
+        break
     writer.close()
 
 
