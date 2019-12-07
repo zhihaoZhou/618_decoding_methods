@@ -49,8 +49,8 @@ def main(args):
         ImageCaptionDataset(data_transforms, args.data, split_type='val'),
         batch_size=args.batch_size, shuffle=True, num_workers=1)
 
-    print(len(val_loader))
-    raise Exception()
+    # print(len(val_loader))
+    # raise Exception()
 
     print('Starting training with {}'.format(args))
     for epoch in range(1, args.epochs + 1):
