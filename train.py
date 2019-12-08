@@ -25,10 +25,6 @@ data_transforms = transforms.Compose([
 def main(args):
     writer = SummaryWriter()
 
-
-    raise Exception('we wef')
-
-
     word_dict = json.load(open(args.data + '/word_dict.json', 'r'))
     vocabulary_size = len(word_dict)
 
@@ -58,6 +54,8 @@ def main(args):
 
     print('Starting training with {}'.format(args))
     for epoch in range(1, args.epochs + 1):
+        raise Exception('we wef')
+        
         scheduler.step()
         # train(epoch, encoder, decoder, optimizer, cross_entropy_loss,
         #       train_loader, word_dict, args.alpha_c, args.log_interval, writer)
