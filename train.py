@@ -57,6 +57,9 @@ def main(args):
         scheduler.step()
         # train(epoch, encoder, decoder, optimizer, cross_entropy_loss,
         #       train_loader, word_dict, args.alpha_c, args.log_interval, writer)
+
+        raise Exception()
+
         validate(epoch, encoder, decoder, cross_entropy_loss, val_loader,
                  word_dict, args.alpha_c, args.log_interval, writer)
         # model_file = 'model/model_' + args.network + '_' + str(epoch) + '.pth'
