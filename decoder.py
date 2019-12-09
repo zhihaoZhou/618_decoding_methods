@@ -82,11 +82,17 @@ class Decoder(nn.Module):
         similar implementation as the author in
         https://github.com/kelvinxu/arctic-captions/blob/master/generate_caps.py
         """
-        prev_words = torch.zeros(beam_size, 1).long()
+        # prev_words = torch.zeros(beam_size, 1).long()
+        #
+        # sentences = prev_words
+        # top_preds = torch.zeros(beam_size, 1)
+        # alphas = torch.ones(beam_size, 1, img_features.size(1))
+
+        prev_words = torch.zeros(beam_size, 1).long().cuda()
 
         sentences = prev_words
-        top_preds = torch.zeros(beam_size, 1)
-        alphas = torch.ones(beam_size, 1, img_features.size(1))
+        top_preds = torch.zeros(beam_size, 1).cuda()
+        alphas = torch.ones(beam_size, 1, img_features.size(1)).cuda()
 
         completed_sentences = []
         completed_sentences_alphas = []
