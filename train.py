@@ -217,6 +217,17 @@ def avg_num_unique_n_grams(all_hypotheses, n=2):
     print(len(all_hypotheses[0]))
     print(len(all_hypotheses[0][0]))
 
+    num_samples = len(all_hypotheses)
+    num_sentences = len(all_hypotheses[0])
+
+    for i in range(num_sentences):
+        num_n_grams_list = []
+        for j in range(num_samples):
+            sent = all_hypotheses[j][i]
+            print(sent)
+            raise Exception()
+            # n_grams =
+
     # for hypo in zip(all_hypotheses):
     #     print(len(hypo))
     #     # print(hypo)
