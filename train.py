@@ -178,7 +178,6 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
 
                 eval_num_batches = 5
                 if batch_idx == eval_num_batches - 1:
-                    all_hypotheses.append(hypotheses)
                     print('exited with %d batches' % eval_num_batches)
                     break
 
@@ -187,6 +186,8 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
             print(len(hypotheses[1]))
             print(len(hypotheses[2]))
             print(hypotheses[0])
+
+            all_hypotheses.append(hypotheses)
 
             # writer.add_scalar('val_loss', losses.avg, epoch)
             # writer.add_scalar('val_top1_acc', top1.avg, epoch)
