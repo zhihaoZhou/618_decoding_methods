@@ -209,16 +209,18 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
                   'BLEU-4 ({})\t'.format(epoch, bleu_1, bleu_2, bleu_3, bleu_4))
 
     # calculate diversity scores
-    avg_num_unique_n_grams(all_hypotheses)
+    div_1 = avg_num_unique_n_grams(all_hypotheses, 1)
+    div_2 = avg_num_unique_n_grams(all_hypotheses, 2)
+
+    print('div_1', div_1)
+    print('div_2', div_2)
 
 
-def avg_num_unique_n_grams(all_hypotheses, n=2):
-    print(len(all_hypotheses))
-    print(len(all_hypotheses[0]))
-    print(len(all_hypotheses[0][0]))
-
+def avg_num_unique_n_grams(all_hypotheses, n):
     num_samples = len(all_hypotheses)
     num_sentences = len(all_hypotheses[0])
+
+    scores = []
 
     for i in range(num_sentences):
         sent_concat = []
@@ -228,14 +230,11 @@ def avg_num_unique_n_grams(all_hypotheses, n=2):
         n_grams = []
         for k in range(len(sent_concat) - n + 1):
             n_grams.append(tuple(sent_concat[k:k + n]))
-        print(n_grams)
 
         num_n_grams = len(set(n_grams))
-        print(num_n_grams)
-        raise Exception()
+        scores.append(float(num_n_grams) / len(sent_concat))
 
-
-    return np.mean(n)
+    return np.mean(scores)
 
 
 if __name__ == "__main__":
