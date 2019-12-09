@@ -135,9 +135,13 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
 
             for batch_idx, (imgs, captions, all_captions) in enumerate(data_loader):
                 imgs, captions = Variable(imgs).cuda(), Variable(captions).cuda()
+
+                print('imgs', imgs.shape)
+
+
                 img_features = encoder(imgs)
 
-                print('1:', img_features.shape)
+                print('img_features', img_features.shape)
                 raise Exception()
 
 
