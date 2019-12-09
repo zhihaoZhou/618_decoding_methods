@@ -154,7 +154,7 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
 
             word_idxs = torch.max(preds, dim=2)[1]
 
-            # print(word_idxs.shape)
+            print(word_idxs.shape)
             # print(word_idxs)
             # raise Exception()
 
