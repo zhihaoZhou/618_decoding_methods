@@ -177,7 +177,8 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
                 print('exited')
                 break
 
-        print(np.array(hypotheses).shape)
+        print(len(hypotheses))
+        print(len(hypotheses[0]))
 
         # writer.add_scalar('val_loss', losses.avg, epoch)
         # writer.add_scalar('val_top1_acc', top1.avg, epoch)
