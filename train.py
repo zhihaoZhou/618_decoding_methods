@@ -165,8 +165,6 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
                 for idxs in word_idxs.tolist():
                     hypo = [idx for idx in idxs
                                            if idx != word_dict['<start>'] and idx != word_dict['<pad>']]
-                    # print(hypo)
-                    # raise Exception()
                     hypotheses.append(hypo)
 
                 # if batch_idx % log_interval == 0:
@@ -178,13 +176,13 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
 
                 eval_num_batches = 5
                 if batch_idx == eval_num_batches - 1:
-                    print('exited')
+                    print('exited with %d batches' % eval_num_batches)
                     break
 
-            print(len(hypotheses))
-            print(len(hypotheses[0]))
-            print(len(hypotheses[1]))
-            print(len(hypotheses[2]))
+            # print(len(hypotheses))
+            # print(len(hypotheses[0]))
+            # print(len(hypotheses[1]))
+            # print(len(hypotheses[2]))
 
             # writer.add_scalar('val_loss', losses.avg, epoch)
             # writer.add_scalar('val_top1_acc', top1.avg, epoch)
