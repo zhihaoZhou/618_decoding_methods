@@ -151,11 +151,11 @@ class Decoder(nn.Module):
         return sentence, alpha
 
     def top_k_caption(self, img_features, beam_size, k):
-        prev_words = torch.zeros(beam_size, 1).long()
+        prev_words = torch.zeros(beam_size, 1).long().cuda()
 
         sentences = prev_words
-        top_preds = torch.zeros(beam_size, 1)
-        alphas = torch.ones(beam_size, 1, img_features.size(1))
+        top_preds = torch.zeros(beam_size, 1).cuda()
+        alphas = torch.ones(beam_size, 1, img_features.size(1)).cuda()
 
         completed_sentences = []
         completed_sentences_alphas = []
@@ -219,11 +219,11 @@ class Decoder(nn.Module):
         return sentence, alpha
 
     def nucleus_caption(self, img_features, beam_size, cumulative_prob):
-        prev_words = torch.zeros(beam_size, 1).long()
+        prev_words = torch.zeros(beam_size, 1).long().cuda()
 
         sentences = prev_words
-        top_preds = torch.zeros(beam_size, 1)
-        alphas = torch.ones(beam_size, 1, img_features.size(1))
+        top_preds = torch.zeros(beam_size, 1).cuda()
+        alphas = torch.ones(beam_size, 1, img_features.size(1)).cuda()
 
         completed_sentences = []
         completed_sentences_alphas = []
@@ -295,11 +295,11 @@ class Decoder(nn.Module):
         return sentence, alpha
 
     def temperature_caption(self, img_features, beam_size, temperature):
-        prev_words = torch.zeros(beam_size, 1).long()
+        prev_words = torch.zeros(beam_size, 1).long().cuda()
 
         sentences = prev_words
-        top_preds = torch.zeros(beam_size, 1)
-        alphas = torch.ones(beam_size, 1, img_features.size(1))
+        top_preds = torch.zeros(beam_size, 1).cuda()
+        alphas = torch.ones(beam_size, 1, img_features.size(1)).cuda()
 
         completed_sentences = []
         completed_sentences_alphas = []
