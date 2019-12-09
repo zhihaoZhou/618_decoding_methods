@@ -224,7 +224,14 @@ def avg_num_unique_n_grams(all_hypotheses, n=2):
         num_n_grams_list = []
         for j in range(num_samples):
             sent = all_hypotheses[j][i]
+            n_grams = []
+            for k in range(len(sent) - n + 1):
+                n_grams.append(tuple(sent[k:k+n]))
+
             print(sent)
+            print(n_grams)
+
+
             raise Exception()
             # n_grams =
 
