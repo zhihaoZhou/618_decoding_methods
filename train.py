@@ -3,6 +3,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from nltk.translate.bleu_score import corpus_bleu
+import numpy as np
 from tensorboardX import SummaryWriter
 from torch.autograd import Variable
 from torch.nn.utils.rnn import pack_padded_sequence
@@ -173,9 +174,7 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
             if batch_idx == 100:
                 break
 
-
-        print(len(hypotheses))
-        print(hypotheses[0].shape)
+        print(np.array(hypotheses).shape)
 
         # writer.add_scalar('val_loss', losses.avg, epoch)
         # writer.add_scalar('val_top1_acc', top1.avg, epoch)
