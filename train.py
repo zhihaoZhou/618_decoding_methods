@@ -121,85 +121,88 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
     # used for calculating bleu scores
     references = []
     hypotheses = []
+
+    num_samples = 5
     with torch.no_grad():
-        for batch_idx, (imgs, captions, all_captions) in enumerate(data_loader):
-            imgs, captions = Variable(imgs).cuda(), Variable(captions).cuda()
-            img_features = encoder(imgs)
-            preds, alphas = decoder(img_features, captions)
+        for ns in num_samples:
+            for batch_idx, (imgs, captions, all_captions) in enumerate(data_loader):
+                imgs, captions = Variable(imgs).cuda(), Variable(captions).cuda()
+                img_features = encoder(imgs)
+                preds, alphas = decoder(img_features, captions)
 
-            # targets = captions[:, 1:]
-            #
-            # targets = pack_padded_sequence(targets, [len(tar) - 1 for tar in targets], batch_first=True)[0]
-            # packed_preds = pack_padded_sequence(preds, [len(pred) - 1 for pred in preds], batch_first=True)[0]
-            #
-            # att_regularization = alpha_c * ((1 - alphas.sum(1))**2).mean()
+                # targets = captions[:, 1:]
+                #
+                # targets = pack_padded_sequence(targets, [len(tar) - 1 for tar in targets], batch_first=True)[0]
+                # packed_preds = pack_padded_sequence(preds, [len(pred) - 1 for pred in preds], batch_first=True)[0]
+                #
+                # att_regularization = alpha_c * ((1 - alphas.sum(1))**2).mean()
 
-            # loss = cross_entropy_loss(packed_preds, targets)
-            # loss += att_regularization
-            #
-            # total_caption_length = calculate_caption_lengths(word_dict, captions)
-            # acc1 = accuracy(packed_preds, targets, 1)
-            # acc5 = accuracy(packed_preds, targets, 5)
-            # losses.update(loss.item(), total_caption_length)
-            # top1.update(acc1, total_caption_length)
-            # top5.update(acc5, total_caption_length)
+                # loss = cross_entropy_loss(packed_preds, targets)
+                # loss += att_regularization
+                #
+                # total_caption_length = calculate_caption_lengths(word_dict, captions)
+                # acc1 = accuracy(packed_preds, targets, 1)
+                # acc5 = accuracy(packed_preds, targets, 5)
+                # losses.update(loss.item(), total_caption_length)
+                # top1.update(acc1, total_caption_length)
+                # top5.update(acc5, total_caption_length)
 
-            for cap_set in all_captions.tolist():
-                caps = []
-                for caption in cap_set:
-                    cap = [word_idx for word_idx in caption
-                                    if word_idx != word_dict['<start>'] and word_idx != word_dict['<pad>']]
-                    caps.append(cap)
-                references.append(caps)
+                for cap_set in all_captions.tolist():
+                    caps = []
+                    for caption in cap_set:
+                        cap = [word_idx for word_idx in caption
+                                        if word_idx != word_dict['<start>'] and word_idx != word_dict['<pad>']]
+                        caps.append(cap)
+                    references.append(caps)
 
-            word_idxs = torch.max(preds, dim=2)[1]
+                word_idxs = torch.max(preds, dim=2)[1]
 
-            # print(word_idxs.shape)
-            # print(word_idxs)
-            # raise Exception()
-
-            for idxs in word_idxs.tolist():
-                hypo = [idx for idx in idxs
-                                       if idx != word_dict['<start>'] and idx != word_dict['<pad>']]
-                # print(hypo)
+                # print(word_idxs.shape)
+                # print(word_idxs)
                 # raise Exception()
-                hypotheses.append(hypo)
 
-            # if batch_idx % log_interval == 0:
-            #     print('Validation Batch: [{0}/{1}]\t'
-            #           'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
-            #           'Top 1 Accuracy {top1.val:.3f} ({top1.avg:.3f})\t'
-            #           'Top 5 Accuracy {top5.val:.3f} ({top5.avg:.3f})'.format(
-            #               batch_idx, len(data_loader), loss=losses, top1=top1, top5=top5))
+                for idxs in word_idxs.tolist():
+                    hypo = [idx for idx in idxs
+                                           if idx != word_dict['<start>'] and idx != word_dict['<pad>']]
+                    # print(hypo)
+                    # raise Exception()
+                    hypotheses.append(hypo)
 
-            eval_num_batches = 5
-            if batch_idx == eval_num_batches - 1:
-                print('exited')
-                break
+                # if batch_idx % log_interval == 0:
+                #     print('Validation Batch: [{0}/{1}]\t'
+                #           'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
+                #           'Top 1 Accuracy {top1.val:.3f} ({top1.avg:.3f})\t'
+                #           'Top 5 Accuracy {top5.val:.3f} ({top5.avg:.3f})'.format(
+                #               batch_idx, len(data_loader), loss=losses, top1=top1, top5=top5))
 
-        print(len(hypotheses))
-        print(len(hypotheses[0]))
-        print(len(hypotheses[1]))
-        print(len(hypotheses[2]))
+                eval_num_batches = 5
+                if batch_idx == eval_num_batches - 1:
+                    print('exited')
+                    break
 
-        # writer.add_scalar('val_loss', losses.avg, epoch)
-        # writer.add_scalar('val_top1_acc', top1.avg, epoch)
-        # writer.add_scalar('val_top5_acc', top5.avg, epoch)
+            print(len(hypotheses))
+            print(len(hypotheses[0]))
+            print(len(hypotheses[1]))
+            print(len(hypotheses[2]))
 
-        bleu_1 = corpus_bleu(references, hypotheses, weights=(1, 0, 0, 0))
-        bleu_2 = corpus_bleu(references, hypotheses, weights=(0.5, 0.5, 0, 0))
-        bleu_3 = corpus_bleu(references, hypotheses, weights=(0.33, 0.33, 0.33, 0))
-        bleu_4 = corpus_bleu(references, hypotheses)
+            # writer.add_scalar('val_loss', losses.avg, epoch)
+            # writer.add_scalar('val_top1_acc', top1.avg, epoch)
+            # writer.add_scalar('val_top5_acc', top5.avg, epoch)
 
-        # writer.add_scalar('val_bleu1', bleu_1, epoch)
-        # writer.add_scalar('val_bleu2', bleu_2, epoch)
-        # writer.add_scalar('val_bleu3', bleu_3, epoch)
-        # writer.add_scalar('val_bleu4', bleu_4, epoch)
-        print('Validation Epoch: {}\t'
-              'BLEU-1 ({})\t'
-              'BLEU-2 ({})\t'
-              'BLEU-3 ({})\t'
-              'BLEU-4 ({})\t'.format(epoch, bleu_1, bleu_2, bleu_3, bleu_4))
+            bleu_1 = corpus_bleu(references, hypotheses, weights=(1, 0, 0, 0))
+            bleu_2 = corpus_bleu(references, hypotheses, weights=(0.5, 0.5, 0, 0))
+            bleu_3 = corpus_bleu(references, hypotheses, weights=(0.33, 0.33, 0.33, 0))
+            bleu_4 = corpus_bleu(references, hypotheses)
+
+            # writer.add_scalar('val_bleu1', bleu_1, epoch)
+            # writer.add_scalar('val_bleu2', bleu_2, epoch)
+            # writer.add_scalar('val_bleu3', bleu_3, epoch)
+            # writer.add_scalar('val_bleu4', bleu_4, epoch)
+            print('Validation Epoch: {}\t'
+                  'BLEU-1 ({})\t'
+                  'BLEU-2 ({})\t'
+                  'BLEU-3 ({})\t'
+                  'BLEU-4 ({})\t'.format(epoch, bleu_1, bleu_2, bleu_3, bleu_4))
 
 
 if __name__ == "__main__":
