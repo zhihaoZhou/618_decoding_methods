@@ -35,8 +35,8 @@ def main(args):
     if args.model:
         decoder.load_state_dict(torch.load(args.model))
 
-    encoder.cuda()
-    decoder.cuda()
+    # encoder.cuda()
+    # decoder.cuda()
 
     optimizer = optim.Adam(decoder.parameters(), lr=args.lr)
     scheduler = optim.lr_scheduler.StepLR(optimizer, args.step_size)
