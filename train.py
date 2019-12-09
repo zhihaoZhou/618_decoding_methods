@@ -136,7 +136,10 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
             for batch_idx, (imgs, captions, all_captions) in enumerate(data_loader):
                 imgs, captions = Variable(imgs).cuda(), Variable(captions).cuda()
                 img_features = encoder(imgs)
-                preds, alphas = decoder(img_features, captions)
+
+                # preds, alphas = decoder(img_features, captions)
+                img_features = img_features.expand(3, img_features.size(1), img_features.size(2))
+                sentence, alpha = decoder.caption(img_features, 3)
 
                 # targets = captions[:, 1:]
                 #
@@ -155,6 +158,9 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
                 # top1.update(acc1, total_caption_length)
                 # top5.update(acc5, total_caption_length)
 
+                # word_idxs = torch.max(preds, dim=2)[1]
+                word_idxs = sentence
+
                 for cap_set in all_captions.tolist():
                     caps = []
                     for caption in cap_set:
@@ -163,7 +169,7 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
                         caps.append(cap)
                     references.append(caps)
 
-                word_idxs = torch.max(preds, dim=2)[1]
+
 
                 # print(word_idxs.shape)
                 # print(word_idxs)
