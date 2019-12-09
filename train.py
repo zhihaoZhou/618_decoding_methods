@@ -224,19 +224,16 @@ def avg_num_unique_n_grams(all_hypotheses, n=2):
         sent_concat = []
         for j in range(num_samples):
             sent_concat.extend(all_hypotheses[j][i])
-        print(sent_concat)
+
+        n_grams = []
+        for k in range(len(sent_concat) - n + 1):
+            n_grams.append(tuple(sent_concat[k:k + n]))
+        print(n_grams)
+
+        num_n_grams = len(set(n_grams))
+        print(num_n_grams)
         raise Exception()
 
-
-        num_n_grams_list = []
-        for j in range(num_samples):
-            sent = all_hypotheses[j][i]
-            n_grams = []
-            for k in range(len(sent) - n + 1):
-                n_grams.append(tuple(sent[k:k+n]))
-
-            num_n_grams = len(set(n_grams))
-            num_n_grams_list.append(num_n_grams)
 
     return np.mean(n)
 
