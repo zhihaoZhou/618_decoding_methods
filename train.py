@@ -211,6 +211,7 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
 
 
 def avg_num_unique_n_grams(all_hypotheses, n=2):
+    print(len(all_hypotheses))
     for hypo in zip(all_hypotheses):
         print(hypo)
         raise Exception()
