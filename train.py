@@ -119,12 +119,13 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
     # top5 = AverageMeter()
 
     # used for calculating bleu scores
-    references = []
-    hypotheses = []
 
     num_samples = 5
     with torch.no_grad():
         for ns in num_samples:
+            references = []
+            hypotheses = []
+
             for batch_idx, (imgs, captions, all_captions) in enumerate(data_loader):
                 imgs, captions = Variable(imgs).cuda(), Variable(captions).cuda()
                 img_features = encoder(imgs)
