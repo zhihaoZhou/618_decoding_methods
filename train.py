@@ -167,7 +167,7 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
                 # top5.update(acc5, total_caption_length)
 
                 # word_idxs = torch.max(preds, dim=2)[1]
-                word_idxs = sentence
+                word_idxs = [sentence]
 
                 for cap_set in all_captions.tolist():
                     caps = []
