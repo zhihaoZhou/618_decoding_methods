@@ -48,7 +48,7 @@ def main(args):
 
     val_loader = torch.utils.data.DataLoader(
         ImageCaptionDataset(data_transforms, args.data, split_type='val'),
-        batch_size=args.batch_size, shuffle=True, num_workers=1)
+        batch_size=args.batch_size, shuffle=False, num_workers=1)
 
     # print(len(val_loader))
     # raise Exception()
