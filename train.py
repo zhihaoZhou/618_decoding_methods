@@ -162,17 +162,21 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
                 hypotheses.append([idx for idx in idxs
                                        if idx != word_dict['<start>'] and idx != word_dict['<pad>']])
 
-            if batch_idx % log_interval == 0:
-                print(log_interval)
-                print(batch_idx)
+            # if batch_idx % log_interval == 0:
+            #     print('Validation Batch: [{0}/{1}]\t'
+            #           'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
+            #           'Top 1 Accuracy {top1.val:.3f} ({top1.avg:.3f})\t'
+            #           'Top 5 Accuracy {top5.val:.3f} ({top5.avg:.3f})'.format(
+            #               batch_idx, len(data_loader), loss=losses, top1=top1, top5=top5))
 
 
-                print('Validation Batch: [{0}/{1}]\t'
-                      'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
-                      'Top 1 Accuracy {top1.val:.3f} ({top1.avg:.3f})\t'
-                      'Top 5 Accuracy {top5.val:.3f} ({top5.avg:.3f})'.format(
-                          batch_idx, len(data_loader), loss=losses, top1=top1, top5=top5))
-                break  # This is for debugging!
+            if batch_idx == 100:
+                break
+
+
+        print(references.shape)
+        raise Exception()
+
         # writer.add_scalar('val_loss', losses.avg, epoch)
         # writer.add_scalar('val_top1_acc', top1.avg, epoch)
         # writer.add_scalar('val_top5_acc', top5.avg, epoch)
