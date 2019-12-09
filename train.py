@@ -123,6 +123,11 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
     num_samples = 5
     all_hypotheses = []
 
+    bleu_1_list = []
+    bleu_2_list = []
+    bleu_3_list = []
+    bleu_4_list = []
+
     with torch.no_grad():
         for ns in range(num_samples):
             references = []
@@ -181,11 +186,11 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
                     print('exited with %d batches' % eval_num_batches)
                     break
 
-            print(len(hypotheses))
-            print(len(hypotheses[0]))
-            print(len(hypotheses[1]))
-            print(len(hypotheses[2]))
-            print(hypotheses[0])
+            # print(len(hypotheses))
+            # print(len(hypotheses[0]))
+            # print(len(hypotheses[1]))
+            # print(len(hypotheses[2]))
+            # print(hypotheses[0])
 
             all_hypotheses.append(hypotheses)
 
@@ -198,6 +203,11 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
             bleu_3 = corpus_bleu(references, hypotheses, weights=(0.33, 0.33, 0.33, 0))
             bleu_4 = corpus_bleu(references, hypotheses)
 
+            bleu_1_list.append(bleu_1)
+            bleu_2_list.append(bleu_2)
+            bleu_3_list.append(bleu_3)
+            bleu_4_list.append(bleu_4)
+
             # writer.add_scalar('val_bleu1', bleu_1, epoch)
             # writer.add_scalar('val_bleu2', bleu_2, epoch)
             # writer.add_scalar('val_bleu3', bleu_3, epoch)
@@ -208,37 +218,39 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
                   'BLEU-3 ({})\t'
                   'BLEU-4 ({})\t'.format(epoch, bleu_1, bleu_2, bleu_3, bleu_4))
 
+    print('~' * 80)
+    print('FINAL SCORES:')
     # calculate diversity scores
-    avg_num_unique_n_grams(all_hypotheses)
+    div_1 = avg_num_unique_n_grams(all_hypotheses, 1)
+    div_2 = avg_num_unique_n_grams(all_hypotheses, 2)
+
+    print('div_1', div_1)
+    print('div_2', div_2)
+    print('bleu-1', np.mean(bleu_1_list))
+    print('bleu-2', np.mean(bleu_2_list))
+    print('bleu-3', np.mean(bleu_3_list))
+    print('bleu-4', np.mean(bleu_4_list))
 
 
-def avg_num_unique_n_grams(all_hypotheses, n=2):
-    print(len(all_hypotheses))
-    print(len(all_hypotheses[0]))
-    print(len(all_hypotheses[0][0]))
-
+def avg_num_unique_n_grams(all_hypotheses, n):
     num_samples = len(all_hypotheses)
     num_sentences = len(all_hypotheses[0])
+
+    scores = []
 
     for i in range(num_sentences):
         sent_concat = []
         for j in range(num_samples):
             sent_concat.extend(all_hypotheses[j][i])
-        print(sent_concat)
-        raise Exception()
 
+        n_grams = []
+        for k in range(len(sent_concat) - n + 1):
+            n_grams.append(tuple(sent_concat[k:k + n]))
 
-        num_n_grams_list = []
-        for j in range(num_samples):
-            sent = all_hypotheses[j][i]
-            n_grams = []
-            for k in range(len(sent) - n + 1):
-                n_grams.append(tuple(sent[k:k+n]))
+        num_n_grams = len(set(n_grams))
+        scores.append(float(num_n_grams) / len(sent_concat))
 
-            num_n_grams = len(set(n_grams))
-            num_n_grams_list.append(num_n_grams)
-
-    return np.mean(n)
+    return np.mean(scores)
 
 
 if __name__ == "__main__":
