@@ -122,7 +122,7 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
 
     num_samples = 5
     with torch.no_grad():
-        for ns in num_samples:
+        for ns in range(num_samples):
             references = []
             hypotheses = []
 
