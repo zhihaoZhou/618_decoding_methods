@@ -158,11 +158,17 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
                 # img_features = img_features.expand(beam_size, img_features.size(1), img_features.size(2))
                 # sentence, alpha = decoder.top_k_caption(img_features, beam_size, top_k)
 
-                # nucleus
-                P = 0.8
+                # # nucleus
+                # P = 0.8
+                # beam_size = 1
+                # img_features = img_features.expand(beam_size, img_features.size(1), img_features.size(2))
+                # sentence, alpha = decoder.nucleus_caption(img_features, beam_size, P)
+
+                # temperature
+                T = 0.5
                 beam_size = 1
                 img_features = img_features.expand(beam_size, img_features.size(1), img_features.size(2))
-                sentence, alpha = decoder.nucleus_caption(img_features, beam_size, P)
+                sentence, alpha = decoder.temperature_caption(img_features, beam_size, T)
 
                 # targets = captions[:, 1:]
                 #
