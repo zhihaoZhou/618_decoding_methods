@@ -146,8 +146,17 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
 
 
                 # preds, alphas = decoder(img_features, captions)
-                img_features = img_features.expand(3, img_features.size(1), img_features.size(2))
-                sentence, alpha = decoder.caption(img_features, 3)
+
+                # beam search
+                # beam_size = 3
+                # img_features = img_features.expand(beam_size, img_features.size(1), img_features.size(2))
+                # sentence, alpha = decoder.caption(img_features, beam_size)
+
+                # top k
+                top_k = 10
+                beam_size = 1
+                img_features = img_features.expand(beam_size, img_features.size(1), img_features.size(2))
+                sentence, alpha = decoder.top_k_caption(img_features, beam_size, top_k)
 
                 # targets = captions[:, 1:]
                 #
