@@ -154,12 +154,9 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
 
             word_idxs = torch.max(preds, dim=2)[1]
 
-            print(word_idxs.shape)
+            # print(word_idxs.shape)
             # print(word_idxs)
             # raise Exception()
-
-            print(len(word_idxs.tolist()))
-            raise Exception()
 
             for idxs in word_idxs.tolist():
                 hypo = [idx for idx in idxs
@@ -168,7 +165,6 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
                 # raise Exception()
                 hypotheses.append(hypo)
 
-
             # if batch_idx % log_interval == 0:
             #     print('Validation Batch: [{0}/{1}]\t'
             #           'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
@@ -176,8 +172,9 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
             #           'Top 5 Accuracy {top5.val:.3f} ({top5.avg:.3f})'.format(
             #               batch_idx, len(data_loader), loss=losses, top1=top1, top5=top5))
 
-
-            if batch_idx == 5:
+            eval_num_batches = 5
+            if batch_idx == eval_num_batches - 1:
+                print('exited')
                 break
 
         print(np.array(hypotheses).shape)
