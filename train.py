@@ -113,9 +113,9 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
     encoder.eval()
     decoder.eval()
 
-    losses = AverageMeter()
-    top1 = AverageMeter()
-    top5 = AverageMeter()
+    # losses = AverageMeter()
+    # top1 = AverageMeter()
+    # top5 = AverageMeter()
 
     # used for calculating bleu scores
     references = []
@@ -153,9 +153,9 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
 
             word_idxs = torch.max(preds, dim=2)[1]
 
-            print(word_idxs.shape)
-            print(word_idxs)
-            raise Exception()
+            # print(word_idxs.shape)
+            # print(word_idxs)
+            # raise Exception()
 
 
             for idxs in word_idxs.tolist():
@@ -163,6 +163,10 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
                                        if idx != word_dict['<start>'] and idx != word_dict['<pad>']])
 
             if batch_idx % log_interval == 0:
+                print(log_interval)
+                print(batch_idx)
+
+
                 print('Validation Batch: [{0}/{1}]\t'
                       'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
                       'Top 1 Accuracy {top1.val:.3f} ({top1.avg:.3f})\t'
