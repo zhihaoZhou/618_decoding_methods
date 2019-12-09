@@ -110,7 +110,6 @@ def train(epoch, encoder, decoder, optimizer, cross_entropy_loss, data_loader, w
 
 
 def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict, alpha_c, log_interval, writer):
-    print('whoiehfgoiuwehbguowbogihweoihfwoi')
     encoder.eval()
     decoder.eval()
 
@@ -153,8 +152,12 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
 
             word_idxs = torch.max(preds, dim=2)[1]
             for idxs in word_idxs.tolist():
-                hypotheses.append([idx for idx in idxs
-                                       if idx != word_dict['<start>'] and idx != word_dict['<pad>']])
+                sent = [idx for idx in idxs
+                                       if idx != word_dict['<start>'] and idx != word_dict['<pad>']]
+                print(sent)
+                raise Exception()
+                
+                hypotheses.append(sent)
 
             if batch_idx % log_interval == 0:
                 print('Validation Batch: [{0}/{1}]\t'
@@ -165,9 +168,6 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
         writer.add_scalar('val_loss', losses.avg, epoch)
         writer.add_scalar('val_top1_acc', top1.avg, epoch)
         writer.add_scalar('val_top5_acc', top5.avg, epoch)
-
-        print(hypotheses)
-        raise Exception()
 
         bleu_1 = corpus_bleu(references, hypotheses, weights=(1, 0, 0, 0))
         bleu_2 = corpus_bleu(references, hypotheses, weights=(0.5, 0.5, 0, 0))
