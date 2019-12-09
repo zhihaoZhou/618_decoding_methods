@@ -126,10 +126,6 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
             img_features = encoder(imgs)
             preds, alphas = decoder(img_features, captions)
 
-            print(preds.shape)
-            print(preds)
-            raise Exception()
-
             # targets = captions[:, 1:]
             #
             # targets = pack_padded_sequence(targets, [len(tar) - 1 for tar in targets], batch_first=True)[0]
@@ -156,6 +152,12 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
                 references.append(caps)
 
             word_idxs = torch.max(preds, dim=2)[1]
+
+            print(word_idxs.shape)
+            print(word_idxs)
+            raise Exception()
+
+
             for idxs in word_idxs.tolist():
                 hypotheses.append([idx for idx in idxs
                                        if idx != word_dict['<start>'] and idx != word_dict['<pad>']])
