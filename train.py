@@ -183,7 +183,8 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
                 # print(word_idxs)
                 # raise Exception()
 
-                for idxs in word_idxs.tolist():
+                # for idxs in word_idxs.tolist():
+                for idxs in word_idxs:
                     hypo = [idx for idx in idxs
                                            if idx != word_dict['<start>'] and idx != word_dict['<pad>']]
                     hypotheses.append(hypo)
