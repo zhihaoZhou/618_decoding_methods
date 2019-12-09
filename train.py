@@ -216,7 +216,8 @@ def avg_num_unique_n_grams(all_hypotheses, n=2):
     print(len(all_hypotheses))
     for hypo in zip(all_hypotheses):
         print(hypo)
-        raise Exception()
+        break
+    raise Exception()
 
 
 if __name__ == "__main__":
