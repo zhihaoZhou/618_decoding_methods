@@ -174,8 +174,8 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
                 break
 
 
-        print(references.shape)
-        raise Exception()
+        print(len(hypotheses))
+        print(hypotheses[0].shape)
 
         # writer.add_scalar('val_loss', losses.avg, epoch)
         # writer.add_scalar('val_top1_acc', top1.avg, epoch)
