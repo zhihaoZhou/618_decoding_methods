@@ -125,6 +125,11 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
             imgs, captions = Variable(imgs).cuda(), Variable(captions).cuda()
             img_features = encoder(imgs)
             preds, alphas = decoder(img_features, captions)
+
+            print(preds.shape)
+            print(preds)
+            raise Exception()
+
             # targets = captions[:, 1:]
             #
             # targets = pack_padded_sequence(targets, [len(tar) - 1 for tar in targets], batch_first=True)[0]
