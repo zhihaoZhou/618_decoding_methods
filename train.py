@@ -137,6 +137,10 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
                 imgs, captions = Variable(imgs).cuda(), Variable(captions).cuda()
                 img_features = encoder(imgs)
 
+                print('1:', img_features.shape)
+                raise Exception()
+
+
                 # preds, alphas = decoder(img_features, captions)
                 img_features = img_features.expand(3, img_features.size(1), img_features.size(2))
                 sentence, alpha = decoder.caption(img_features, 3)
