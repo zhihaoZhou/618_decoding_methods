@@ -136,13 +136,13 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
             for batch_idx, (imgs, captions, all_captions) in enumerate(data_loader):
                 imgs, captions = Variable(imgs).cuda(), Variable(captions).cuda()
 
-                print('imgs', imgs.shape)
+                # print('imgs', imgs.shape)
 
 
                 img_features = encoder(imgs)
 
-                print('img_features', img_features.shape)
-                raise Exception()
+                # print('img_features', img_features.shape)
+                # raise Exception()
 
 
                 # preds, alphas = decoder(img_features, captions)
@@ -195,7 +195,7 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
                 #           'Top 5 Accuracy {top5.val:.3f} ({top5.avg:.3f})'.format(
                 #               batch_idx, len(data_loader), loss=losses, top1=top1, top5=top5))
 
-                eval_num_batches = 5
+                eval_num_batches = 100
                 if batch_idx == eval_num_batches - 1:
                     print('exited with %d batches' % eval_num_batches)
                     break
@@ -269,7 +269,9 @@ def avg_num_unique_n_grams(all_hypotheses, n):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Show, Attend and Tell')
-    parser.add_argument('--batch-size', type=int, default=64, metavar='N',
+    # parser.add_argument('--batch-size', type=int, default=64, metavar='N',
+    #                     help='batch size for training (default: 64)')
+    parser.add_argument('--batch-size', type=int, default=1, metavar='N',
                         help='batch size for training (default: 64)')
     parser.add_argument('--epochs', type=int, default=10, metavar='E',
                         help='number of epochs to train for (default: 10)')
