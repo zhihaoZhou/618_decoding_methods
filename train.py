@@ -125,22 +125,22 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
             imgs, captions = Variable(imgs).cuda(), Variable(captions).cuda()
             img_features = encoder(imgs)
             preds, alphas = decoder(img_features, captions)
-            targets = captions[:, 1:]
+            # targets = captions[:, 1:]
+            #
+            # targets = pack_padded_sequence(targets, [len(tar) - 1 for tar in targets], batch_first=True)[0]
+            # packed_preds = pack_padded_sequence(preds, [len(pred) - 1 for pred in preds], batch_first=True)[0]
+            #
+            # att_regularization = alpha_c * ((1 - alphas.sum(1))**2).mean()
 
-            targets = pack_padded_sequence(targets, [len(tar) - 1 for tar in targets], batch_first=True)[0]
-            packed_preds = pack_padded_sequence(preds, [len(pred) - 1 for pred in preds], batch_first=True)[0]
-
-            att_regularization = alpha_c * ((1 - alphas.sum(1))**2).mean()
-
-            loss = cross_entropy_loss(packed_preds, targets)
-            loss += att_regularization
-
-            total_caption_length = calculate_caption_lengths(word_dict, captions)
-            acc1 = accuracy(packed_preds, targets, 1)
-            acc5 = accuracy(packed_preds, targets, 5)
-            losses.update(loss.item(), total_caption_length)
-            top1.update(acc1, total_caption_length)
-            top5.update(acc5, total_caption_length)
+            # loss = cross_entropy_loss(packed_preds, targets)
+            # loss += att_regularization
+            #
+            # total_caption_length = calculate_caption_lengths(word_dict, captions)
+            # acc1 = accuracy(packed_preds, targets, 1)
+            # acc5 = accuracy(packed_preds, targets, 5)
+            # losses.update(loss.item(), total_caption_length)
+            # top1.update(acc1, total_caption_length)
+            # top5.update(acc5, total_caption_length)
 
             for cap_set in all_captions.tolist():
                 caps = []
@@ -152,12 +152,8 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
 
             word_idxs = torch.max(preds, dim=2)[1]
             for idxs in word_idxs.tolist():
-                sent = [idx for idx in idxs
-                                       if idx != word_dict['<start>'] and idx != word_dict['<pad>']]
-                print(sent)
-                raise Exception()
-                
-                hypotheses.append(sent)
+                hypotheses.append([idx for idx in idxs
+                                       if idx != word_dict['<start>'] and idx != word_dict['<pad>']])
 
             if batch_idx % log_interval == 0:
                 print('Validation Batch: [{0}/{1}]\t'
@@ -165,19 +161,20 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
                       'Top 1 Accuracy {top1.val:.3f} ({top1.avg:.3f})\t'
                       'Top 5 Accuracy {top5.val:.3f} ({top5.avg:.3f})'.format(
                           batch_idx, len(data_loader), loss=losses, top1=top1, top5=top5))
-        writer.add_scalar('val_loss', losses.avg, epoch)
-        writer.add_scalar('val_top1_acc', top1.avg, epoch)
-        writer.add_scalar('val_top5_acc', top5.avg, epoch)
+                break  # This is for debugging!
+        # writer.add_scalar('val_loss', losses.avg, epoch)
+        # writer.add_scalar('val_top1_acc', top1.avg, epoch)
+        # writer.add_scalar('val_top5_acc', top5.avg, epoch)
 
         bleu_1 = corpus_bleu(references, hypotheses, weights=(1, 0, 0, 0))
         bleu_2 = corpus_bleu(references, hypotheses, weights=(0.5, 0.5, 0, 0))
         bleu_3 = corpus_bleu(references, hypotheses, weights=(0.33, 0.33, 0.33, 0))
         bleu_4 = corpus_bleu(references, hypotheses)
 
-        writer.add_scalar('val_bleu1', bleu_1, epoch)
-        writer.add_scalar('val_bleu2', bleu_2, epoch)
-        writer.add_scalar('val_bleu3', bleu_3, epoch)
-        writer.add_scalar('val_bleu4', bleu_4, epoch)
+        # writer.add_scalar('val_bleu1', bleu_1, epoch)
+        # writer.add_scalar('val_bleu2', bleu_2, epoch)
+        # writer.add_scalar('val_bleu3', bleu_3, epoch)
+        # writer.add_scalar('val_bleu4', bleu_4, epoch)
         print('Validation Epoch: {}\t'
               'BLEU-1 ({})\t'
               'BLEU-2 ({})\t'
