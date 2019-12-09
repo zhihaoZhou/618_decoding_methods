@@ -121,6 +121,8 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
     # used for calculating bleu scores
 
     num_samples = 5
+    all_hypotheses = []
+
     with torch.no_grad():
         for ns in range(num_samples):
             references = []
@@ -176,6 +178,7 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
 
                 eval_num_batches = 5
                 if batch_idx == eval_num_batches - 1:
+                    all_hypotheses.append(hypotheses)
                     print('exited with %d batches' % eval_num_batches)
                     break
 
@@ -202,6 +205,15 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
                   'BLEU-2 ({})\t'
                   'BLEU-3 ({})\t'
                   'BLEU-4 ({})\t'.format(epoch, bleu_1, bleu_2, bleu_3, bleu_4))
+
+    # calculate diversity scores
+    avg_num_unique_n_grams(all_hypotheses)
+
+
+def avg_num_unique_n_grams(all_hypotheses, n=2):
+    for hypo in zip(all_hypotheses):
+        print(hypo)
+        raise Exception()
 
 
 if __name__ == "__main__":
