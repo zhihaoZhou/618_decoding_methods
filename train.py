@@ -124,7 +124,7 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
     metrics = []
 
     with torch.no_grad():
-        for top_k in range(1, 102, 10):  # top-k sample
+        for top_k in range(1, 1002, 100):  # top-k sample
             print('-' * 80)
             print('top_k', top_k)
 
