@@ -130,9 +130,13 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
     metrics = []
 
     with torch.no_grad():
-        for top_k in range(1, 11):  # top-k sample
+        # for top_k in range(1, 11):  # top-k sample
+        #     print('-' * 80)
+        #     print('top_k', top_k)
+        for P in np.arange(0.1, 1.1, 0.1):  # nucleus sample
             print('-' * 80)
-            print('top_k', top_k)
+            print('P', P)
+
             for ns in range(num_samples):
                 references = []
                 hypotheses = []
@@ -148,17 +152,17 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
                     # img_features = img_features.expand(beam_size, img_features.size(1), img_features.size(2))
                     # sentence, alpha = decoder.caption(img_features, beam_size)
 
-                    # top k
-                    # top_k = 3
-                    beam_size = 1
-                    img_features = img_features.expand(beam_size, img_features.size(1), img_features.size(2))
-                    sentence, alpha = decoder.top_k_caption(img_features, beam_size, top_k)
-
-                    # # nucleus
-                    # P = 0.5
+                    # # top k
+                    # # top_k = 3
                     # beam_size = 1
                     # img_features = img_features.expand(beam_size, img_features.size(1), img_features.size(2))
-                    # sentence, alpha = decoder.nucleus_caption(img_features, beam_size, P)
+                    # sentence, alpha = decoder.top_k_caption(img_features, beam_size, top_k)
+
+                    # nucleus
+                    # P = 0.5
+                    beam_size = 1
+                    img_features = img_features.expand(beam_size, img_features.size(1), img_features.size(2))
+                    sentence, alpha = decoder.nucleus_caption(img_features, beam_size, P)
 
                     # # temperature
                     # T = 0.5
@@ -255,7 +259,7 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
             # calculate diversity scores
             div_1 = avg_num_unique_n_grams(all_hypotheses, 1)
             div_2 = avg_num_unique_n_grams(all_hypotheses, 2)
-    
+
             print('div_1', div_1)
             print('div_2', div_2)
             print('bleu-1', np.mean(bleu_1_list))
