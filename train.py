@@ -128,13 +128,13 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
         #     print('-' * 80)
         #     print('top_k', top_k)
 
-        for P in np.arange(0.9, 0, -0.1):  # nucleus sample
-            print('-' * 80)
-            print('P', P)
-
-        # for T in np.arange(1, 0, -0.1):  # temperature sample
+        # for P in np.arange(0.9, 0, -0.1):  # nucleus sample
         #     print('-' * 80)
-        #     print('T', T)
+        #     print('P', P)
+
+        for T in np.arange(1, 0, -0.1):  # temperature sample
+            print('-' * 80)
+            print('T', T)
 
             all_hypotheses = []
 
@@ -164,17 +164,17 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
                     # img_features = img_features.expand(beam_size, img_features.size(1), img_features.size(2))
                     # sentence, alpha = decoder.top_k_caption(img_features, beam_size, top_k)
 
-                    # nucleus
-                    # P = 0.5
-                    beam_size = 1
-                    img_features = img_features.expand(beam_size, img_features.size(1), img_features.size(2))
-                    sentence, alpha = decoder.nucleus_caption(img_features, beam_size, P)
-
-                    # # temperature
-                    # # T = 0.5
+                    # # nucleus
+                    # # P = 0.5
                     # beam_size = 1
                     # img_features = img_features.expand(beam_size, img_features.size(1), img_features.size(2))
-                    # sentence, alpha = decoder.temperature_caption(img_features, beam_size, T)
+                    # sentence, alpha = decoder.nucleus_caption(img_features, beam_size, P)
+
+                    # temperature
+                    # T = 0.5
+                    beam_size = 1
+                    img_features = img_features.expand(beam_size, img_features.size(1), img_features.size(2))
+                    sentence, alpha = decoder.temperature_caption(img_features, beam_size, T)
 
                     # targets = captions[:, 1:]
                     #
