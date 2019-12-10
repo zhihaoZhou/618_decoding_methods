@@ -250,20 +250,20 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
                       'BLEU-3 ({})\t'
                       'BLEU-4 ({})\t'.format(epoch, bleu_1, bleu_2, bleu_3, bleu_4))
 
-        print('~' * 80)
-        print('FINAL SCORES:')
-        # calculate diversity scores
-        div_1 = avg_num_unique_n_grams(all_hypotheses, 1)
-        div_2 = avg_num_unique_n_grams(all_hypotheses, 2)
+            print('~' * 80)
+            print('FINAL SCORES:')
+            # calculate diversity scores
+            div_1 = avg_num_unique_n_grams(all_hypotheses, 1)
+            div_2 = avg_num_unique_n_grams(all_hypotheses, 2)
+    
+            print('div_1', div_1)
+            print('div_2', div_2)
+            print('bleu-1', np.mean(bleu_1_list))
+            print('bleu-2', np.mean(bleu_2_list))
+            print('bleu-3', np.mean(bleu_3_list))
+            print('bleu-4', np.mean(bleu_4_list))
 
-        print('div_1', div_1)
-        print('div_2', div_2)
-        print('bleu-1', np.mean(bleu_1_list))
-        print('bleu-2', np.mean(bleu_2_list))
-        print('bleu-3', np.mean(bleu_3_list))
-        print('bleu-4', np.mean(bleu_4_list))
-
-        metrics.append((np.mean(bleu_2_list), div_2))
+            metrics.append((np.mean(bleu_2_list), div_2))
     print(metrics)
 
 
