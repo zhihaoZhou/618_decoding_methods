@@ -220,7 +220,7 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
                     #           'Top 5 Accuracy {top5.val:.3f} ({top5.avg:.3f})'.format(
                     #               batch_idx, len(data_loader), loss=losses, top1=top1, top5=top5))
 
-                    eval_num_batches = 100
+                    eval_num_batches = 1000
                     if batch_idx == eval_num_batches - 1:
                         print('exited with %d batches' % eval_num_batches)
                         break
