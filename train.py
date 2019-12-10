@@ -133,7 +133,7 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
         # for top_k in range(1, 11):  # top-k sample
         #     print('-' * 80)
         #     print('top_k', top_k)
-        for P in np.arange(0.1, 1.1, 0.1):  # nucleus sample
+        for P in np.arange(0.1, 1.0, 0.1):  # nucleus sample
             print('-' * 80)
             print('P', P)
 
