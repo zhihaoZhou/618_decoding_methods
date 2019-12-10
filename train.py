@@ -127,145 +127,144 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
     bleu_2_list = []
     bleu_3_list = []
     bleu_4_list = []
+    metrics = []
 
     with torch.no_grad():
-        for ns in range(num_samples):
-            references = []
-            hypotheses = []
+        for top_k in range(1, 11):  # top-k sample
+            print('-' * 80)
+            print('top_k', top_k)
+            for ns in range(num_samples):
+                references = []
+                hypotheses = []
 
-            for batch_idx, (imgs, captions, all_captions) in enumerate(data_loader):
-                imgs, captions = Variable(imgs).cuda(), Variable(captions).cuda()
+                for batch_idx, (imgs, captions, all_captions) in enumerate(data_loader):
+                    imgs, captions = Variable(imgs).cuda(), Variable(captions).cuda()
+                    img_features = encoder(imgs)
 
-                # print('imgs', imgs.shape)
+                    # preds, alphas = decoder(img_features, captions)
 
+                    # beam search
+                    # beam_size = 3
+                    # img_features = img_features.expand(beam_size, img_features.size(1), img_features.size(2))
+                    # sentence, alpha = decoder.caption(img_features, beam_size)
 
-                img_features = encoder(imgs)
+                    # top k
+                    # top_k = 3
+                    beam_size = 1
+                    img_features = img_features.expand(beam_size, img_features.size(1), img_features.size(2))
+                    sentence, alpha = decoder.top_k_caption(img_features, beam_size, top_k)
 
-                # print('img_features', img_features.shape)
-                # raise Exception()
+                    # # nucleus
+                    # P = 0.5
+                    # beam_size = 1
+                    # img_features = img_features.expand(beam_size, img_features.size(1), img_features.size(2))
+                    # sentence, alpha = decoder.nucleus_caption(img_features, beam_size, P)
 
+                    # # temperature
+                    # T = 0.5
+                    # beam_size = 1
+                    # img_features = img_features.expand(beam_size, img_features.size(1), img_features.size(2))
+                    # sentence, alpha = decoder.temperature_caption(img_features, beam_size, T)
 
-                # preds, alphas = decoder(img_features, captions)
+                    # targets = captions[:, 1:]
+                    #
+                    # targets = pack_padded_sequence(targets, [len(tar) - 1 for tar in targets], batch_first=True)[0]
+                    # packed_preds = pack_padded_sequence(preds, [len(pred) - 1 for pred in preds], batch_first=True)[0]
+                    #
+                    # att_regularization = alpha_c * ((1 - alphas.sum(1))**2).mean()
 
-                # beam search
-                # beam_size = 3
-                # img_features = img_features.expand(beam_size, img_features.size(1), img_features.size(2))
-                # sentence, alpha = decoder.caption(img_features, beam_size)
+                    # loss = cross_entropy_loss(packed_preds, targets)
+                    # loss += att_regularization
+                    #
+                    # total_caption_length = calculate_caption_lengths(word_dict, captions)
+                    # acc1 = accuracy(packed_preds, targets, 1)
+                    # acc5 = accuracy(packed_preds, targets, 5)
+                    # losses.update(loss.item(), total_caption_length)
+                    # top1.update(acc1, total_caption_length)
+                    # top5.update(acc5, total_caption_length)
 
-                # # top k
-                # top_k = 3
-                # beam_size = 1
-                # img_features = img_features.expand(beam_size, img_features.size(1), img_features.size(2))
-                # sentence, alpha = decoder.top_k_caption(img_features, beam_size, top_k)
+                    # word_idxs = torch.max(preds, dim=2)[1]
+                    word_idxs = [sentence]
 
-                # nucleus
-                P = 0.5
-                beam_size = 1
-                img_features = img_features.expand(beam_size, img_features.size(1), img_features.size(2))
-                sentence, alpha = decoder.nucleus_caption(img_features, beam_size, P)
-
-                # # temperature
-                # T = 0.5
-                # beam_size = 1
-                # img_features = img_features.expand(beam_size, img_features.size(1), img_features.size(2))
-                # sentence, alpha = decoder.temperature_caption(img_features, beam_size, T)
-
-                # targets = captions[:, 1:]
-                #
-                # targets = pack_padded_sequence(targets, [len(tar) - 1 for tar in targets], batch_first=True)[0]
-                # packed_preds = pack_padded_sequence(preds, [len(pred) - 1 for pred in preds], batch_first=True)[0]
-                #
-                # att_regularization = alpha_c * ((1 - alphas.sum(1))**2).mean()
-
-                # loss = cross_entropy_loss(packed_preds, targets)
-                # loss += att_regularization
-                #
-                # total_caption_length = calculate_caption_lengths(word_dict, captions)
-                # acc1 = accuracy(packed_preds, targets, 1)
-                # acc5 = accuracy(packed_preds, targets, 5)
-                # losses.update(loss.item(), total_caption_length)
-                # top1.update(acc1, total_caption_length)
-                # top5.update(acc5, total_caption_length)
-
-                # word_idxs = torch.max(preds, dim=2)[1]
-                word_idxs = [sentence]
-
-                for cap_set in all_captions.tolist():
-                    caps = []
-                    for caption in cap_set:
-                        cap = [word_idx for word_idx in caption
-                                        if word_idx != word_dict['<start>'] and word_idx != word_dict['<pad>']]
-                        caps.append(cap)
-                    references.append(caps)
+                    for cap_set in all_captions.tolist():
+                        caps = []
+                        for caption in cap_set:
+                            cap = [word_idx for word_idx in caption
+                                            if word_idx != word_dict['<start>'] and word_idx != word_dict['<pad>']]
+                            caps.append(cap)
+                        references.append(caps)
 
 
 
-                # print(word_idxs.shape)
-                # print(word_idxs)
-                # raise Exception()
+                    # print(word_idxs.shape)
+                    # print(word_idxs)
+                    # raise Exception()
 
-                # for idxs in word_idxs.tolist():
-                for idxs in word_idxs:
-                    hypo = [idx for idx in idxs
-                                           if idx != word_dict['<start>'] and idx != word_dict['<pad>']]
-                    hypotheses.append(hypo)
+                    # for idxs in word_idxs.tolist():
+                    for idxs in word_idxs:
+                        hypo = [idx for idx in idxs
+                                               if idx != word_dict['<start>'] and idx != word_dict['<pad>']]
+                        hypotheses.append(hypo)
 
-                # if batch_idx % log_interval == 0:
-                #     print('Validation Batch: [{0}/{1}]\t'
-                #           'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
-                #           'Top 1 Accuracy {top1.val:.3f} ({top1.avg:.3f})\t'
-                #           'Top 5 Accuracy {top5.val:.3f} ({top5.avg:.3f})'.format(
-                #               batch_idx, len(data_loader), loss=losses, top1=top1, top5=top5))
+                    # if batch_idx % log_interval == 0:
+                    #     print('Validation Batch: [{0}/{1}]\t'
+                    #           'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
+                    #           'Top 1 Accuracy {top1.val:.3f} ({top1.avg:.3f})\t'
+                    #           'Top 5 Accuracy {top5.val:.3f} ({top5.avg:.3f})'.format(
+                    #               batch_idx, len(data_loader), loss=losses, top1=top1, top5=top5))
 
-                eval_num_batches = 100
-                if batch_idx == eval_num_batches - 1:
-                    print('exited with %d batches' % eval_num_batches)
-                    break
+                    eval_num_batches = 100
+                    if batch_idx == eval_num_batches - 1:
+                        print('exited with %d batches' % eval_num_batches)
+                        break
 
-            # print(len(hypotheses))
-            # print(len(hypotheses[0]))
-            # print(len(hypotheses[1]))
-            # print(len(hypotheses[2]))
-            # print(hypotheses[0])
+                # print(len(hypotheses))
+                # print(len(hypotheses[0]))
+                # print(len(hypotheses[1]))
+                # print(len(hypotheses[2]))
+                # print(hypotheses[0])
 
-            all_hypotheses.append(hypotheses)
+                all_hypotheses.append(hypotheses)
 
-            # writer.add_scalar('val_loss', losses.avg, epoch)
-            # writer.add_scalar('val_top1_acc', top1.avg, epoch)
-            # writer.add_scalar('val_top5_acc', top5.avg, epoch)
+                # writer.add_scalar('val_loss', losses.avg, epoch)
+                # writer.add_scalar('val_top1_acc', top1.avg, epoch)
+                # writer.add_scalar('val_top5_acc', top5.avg, epoch)
 
-            bleu_1 = corpus_bleu(references, hypotheses, weights=(1, 0, 0, 0))
-            bleu_2 = corpus_bleu(references, hypotheses, weights=(0.5, 0.5, 0, 0))
-            bleu_3 = corpus_bleu(references, hypotheses, weights=(0.33, 0.33, 0.33, 0))
-            bleu_4 = corpus_bleu(references, hypotheses)
+                bleu_1 = corpus_bleu(references, hypotheses, weights=(1, 0, 0, 0))
+                bleu_2 = corpus_bleu(references, hypotheses, weights=(0.5, 0.5, 0, 0))
+                bleu_3 = corpus_bleu(references, hypotheses, weights=(0.33, 0.33, 0.33, 0))
+                bleu_4 = corpus_bleu(references, hypotheses)
 
-            bleu_1_list.append(bleu_1)
-            bleu_2_list.append(bleu_2)
-            bleu_3_list.append(bleu_3)
-            bleu_4_list.append(bleu_4)
+                bleu_1_list.append(bleu_1)
+                bleu_2_list.append(bleu_2)
+                bleu_3_list.append(bleu_3)
+                bleu_4_list.append(bleu_4)
 
-            # writer.add_scalar('val_bleu1', bleu_1, epoch)
-            # writer.add_scalar('val_bleu2', bleu_2, epoch)
-            # writer.add_scalar('val_bleu3', bleu_3, epoch)
-            # writer.add_scalar('val_bleu4', bleu_4, epoch)
-            print('Validation Epoch: {}\t'
-                  'BLEU-1 ({})\t'
-                  'BLEU-2 ({})\t'
-                  'BLEU-3 ({})\t'
-                  'BLEU-4 ({})\t'.format(epoch, bleu_1, bleu_2, bleu_3, bleu_4))
+                # writer.add_scalar('val_bleu1', bleu_1, epoch)
+                # writer.add_scalar('val_bleu2', bleu_2, epoch)
+                # writer.add_scalar('val_bleu3', bleu_3, epoch)
+                # writer.add_scalar('val_bleu4', bleu_4, epoch)
+                print('Validation Epoch: {}\t'
+                      'BLEU-1 ({})\t'
+                      'BLEU-2 ({})\t'
+                      'BLEU-3 ({})\t'
+                      'BLEU-4 ({})\t'.format(epoch, bleu_1, bleu_2, bleu_3, bleu_4))
 
-    print('~' * 80)
-    print('FINAL SCORES:')
-    # calculate diversity scores
-    div_1 = avg_num_unique_n_grams(all_hypotheses, 1)
-    div_2 = avg_num_unique_n_grams(all_hypotheses, 2)
+        print('~' * 80)
+        print('FINAL SCORES:')
+        # calculate diversity scores
+        div_1 = avg_num_unique_n_grams(all_hypotheses, 1)
+        div_2 = avg_num_unique_n_grams(all_hypotheses, 2)
 
-    print('div_1', div_1)
-    print('div_2', div_2)
-    print('bleu-1', np.mean(bleu_1_list))
-    print('bleu-2', np.mean(bleu_2_list))
-    print('bleu-3', np.mean(bleu_3_list))
-    print('bleu-4', np.mean(bleu_4_list))
+        print('div_1', div_1)
+        print('div_2', div_2)
+        print('bleu-1', np.mean(bleu_1_list))
+        print('bleu-2', np.mean(bleu_2_list))
+        print('bleu-3', np.mean(bleu_3_list))
+        print('bleu-4', np.mean(bleu_4_list))
+
+        metrics.append((np.mean(bleu_2_list), div_2))
+    print(metrics)
 
 
 def avg_num_unique_n_grams(all_hypotheses, n):
