@@ -121,12 +121,6 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
     # used for calculating bleu scores
 
     num_samples = 5
-    all_hypotheses = []
-
-    bleu_1_list = []
-    bleu_2_list = []
-    bleu_3_list = []
-    bleu_4_list = []
     metrics = []
 
     with torch.no_grad():
@@ -141,6 +135,13 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
         # for T in np.arange(1, 0, -0.1):  # temperature sample
         #     print('-' * 80)
         #     print('T', T)
+
+            all_hypotheses = []
+
+            bleu_1_list = []
+            bleu_2_list = []
+            bleu_3_list = []
+            bleu_4_list = []
 
             for ns in range(num_samples):
                 references = []
@@ -202,12 +203,6 @@ def validate(epoch, encoder, decoder, cross_entropy_loss, data_loader, word_dict
                                             if word_idx != word_dict['<start>'] and word_idx != word_dict['<pad>']]
                             caps.append(cap)
                         references.append(caps)
-
-
-
-                    # print(word_idxs.shape)
-                    # print(word_idxs)
-                    # raise Exception()
 
                     # for idxs in word_idxs.tolist():
                     for idxs in word_idxs:
